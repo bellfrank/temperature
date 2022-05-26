@@ -44,10 +44,7 @@ int main()
     double humidity;
 
     while(TRUE){
-
-        temperature = 0;
-        humidity = 0;
-
+        
         dht11_dat(&temperature, &humidity);
         printf("Temp:%lf\n", temperature);
         printf("Humidity:%lf\n", humidity);
