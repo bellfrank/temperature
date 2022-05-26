@@ -4,6 +4,7 @@
 #include <lcd.h>               
 #include <time.h>
 #include <math.h>
+#include <mysql/mysql.h>
 
 
 
@@ -21,11 +22,43 @@ void dht11_dat(double *temp, double *humid);
 
 int main()
 {
+    MYSQL *conn;
+    MYSQL_RES *res;
+    MYSQL_ROW row;
+
+    /* Server Information */
+    char *server = "localhost";
+    char *user = "frank";
+    char *password = "password";
+    char *database = "datalog";
+
+    conn = mysql_init(NULL);
+
+    /* Connect to database */
+    if (!mysql_real_connect(conn, server, user, password, database, 0, NULL, 0)){
+        fprintf(stderr, "%s\n", mysql_error(conn));
+        exit(1);
+    }
+
     double temperature;
     double humidity;
-    dht11_dat(&temperature, &humidity);
-    printf("%lf\n", temperature);
-    printf("%lf\n", humidity);
+
+    while(1){
+
+        dht11_dat(&temperature, &humidity);
+        printf("%lf\n", temperature);
+        printf("%lf\n", humidity);
+        
+        char query[100] = "";
+        sprintf(query, "insert into thlog values (%lf, %lf, CURRENT_TIMESTAMP)", temperature, humidity);
+        
+        /* send SQL query */
+        if (mysql_query(conn, query)){
+            fprintf(stderr, "%s\n", mysql_error(conn));
+            exit(1);
+        }
+
+    }
 
     return 0;
 }
