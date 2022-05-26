@@ -43,21 +43,25 @@ int main()
     double temperature;
     double humidity;
 
-    while(1){
+    while(TRUE){
+
+        temperature = 0;
+        humidity = 0;
 
         dht11_dat(&temperature, &humidity);
-        printf("%lf\n", temperature);
-        printf("%lf\n", humidity);
+        printf("Temp:%lf\n", temperature);
+        printf("Humidity:%lf\n", humidity);
         
         char query[100] = "";
-        sprintf(query, "insert into thlog values (%lf, %lf, CURRENT_TIMESTAMP)", temperature, humidity);
+        sprintf(query, "insert into thlog (temperature, humidity, time) values (%lf, %lf, CURRENT_TIMESTAMP)", temperature, humidity);
         
         /* send SQL query */
         if (mysql_query(conn, query)){
             fprintf(stderr, "%s\n", mysql_error(conn));
             exit(1);
         }
-
+        
+        sleep(1);
     }
 
     return 0;
@@ -77,9 +81,11 @@ void dht11_dat(double *temp, double *humid)
     srand(time(NULL));
     int r = rand();
     double noise = (double) r / RAND_MAX - 0.5; // noise is [-0.5, 0.5]
-
+    printf("Noise: %lf\n", noise);
     *temp = 60 - 20*cos(3.14*t/12) + 2*noise;
     *humid = 70 + 20*cos(3.14*t/12) + 5*noise;
+    printf("%lf\n", *temp);
+    printf("%lf\n", *humid);
 }
 
 // current time

@@ -1,9 +1,10 @@
 # depslib dependency file v1.0
-1653597908 source:/home/pi/Desktop/temperature/tempandhumidity/main.c
+1653600521 source:/home/pi/Desktop/temperature/tempandhumidity/main.c
 	<stdio.h>
 	<stdlib.h>
 	<wiringPi.h>
 	<lcd.h>
 	<time.h>
 	<math.h>
+	<mysql/mysql.h>
 
