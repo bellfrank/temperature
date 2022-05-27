@@ -1,5 +1,5 @@
 #!/usr/bin/python
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, jsonify
 from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
 from helpers import apology
 import datetime
@@ -64,13 +64,8 @@ def index():
             try:
                 date = request.form.get("date")
                 date2 = request.form.get("date2")
-                print(date)
-                print(date2)
                 cur.execute(f"SELECT time,temperature from thlog2 where temperature = (SELECT MAX(temperature) FROM thlog2 WHERE time BETWEEN '{date}' AND '{date2}')")
-                # Print Result-set
-                dataform = cur
-                print(datetime.datetime(2022, 5, 27, 0, 50, 2))
-                print(dataform)
+            
                 return render_template("index.html", cur=cur)
             
             except mariadb.Error as e:
@@ -81,7 +76,27 @@ def index():
     else:
         return render_template("index.html")
 
+#API CALL
+@app.route("/query", methods=["GET"])
+def query():
+    # Query table
+    try:
+        cur.execute("SELECT * FROM thlog2 ORDER BY id DESC LIMIT 1")
+        print(cur)
+        for (temperature, humidity, time, id) in cur:
+            pass
 
+        # Creating dictionary to send back in JSON form
+        info = {"temperature":temperature,
+            "humidity":humidity,
+            "time":time,
+            "id":id
+        }
+    
+    except mariadb.Error as e:
+                print(f"Error: {e}")
+
+    return jsonify(info) # returning a JSON response
 
 def errorhandler(e):
     """Handle error"""
