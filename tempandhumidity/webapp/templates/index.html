@@ -1,12 +1,37 @@
 {% extends "layout.html" %}
 
 {% block body %}
-<div class="blob"></div>
+<script>
+    setInterval(myTimer, 1000);
+    
+    function myTimer() {
+      const d = new Date();
+      document.getElementById("demo").innerHTML = d.toLocaleTimeString();
+    }
+</script>
+
+<div class="blob green" id=>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Live</div>
+<p id="demo" style="float: right;"></p>
+
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
 
 <form action="/date" method="post">
-
-    <input autocomplete="off" autofocus name="date" placeholder="Date" type="text">
-    <select name="calculate">
+    from
+    <input autocomplete="off" autofocus name="date" placeholder="YYYY-MM-DD 15:10:27" type="text" required="true" > to
+    <input autocomplete="off" autofocus name="date2" placeholder="2022-05-26 16:12:27" type="text" required="true">
+    <p></p>
+    <select name="data" required="true">
+        <option disabled selected value="">Data</option>
+        <option value="Temperature">Temperature</option>
+        <option value="Humidity">Humidity</option>
+    </select>
+    <select name="calculate" required="true">
         <option disabled selected value="">Calculate</option>
         <option value="Average">Average</option>
         <option value="Mininimum">Mininimum</option>
@@ -15,5 +40,39 @@
     <input type="submit" value="Analyze">
 
 </form>
+
+<br>
+<br>
+<br>
+<br>
+<table class="table table-hover">
+    <thead>
+      <tr>
+        <th scope="col">Recent Data</th>
+        <th scope="col">First</th>
+        <th scope="col">Last</th>
+        <th scope="col">Handle</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <th scope="row">1</th>
+        <td>Mark</td>
+        <td>Otto</td>
+        <td>@mdo</td>
+      </tr>
+      <tr>
+        <th scope="row">2</th>
+        <td>Jacob</td>
+        <td>Thornton</td>
+        <td>@fat</td>
+      </tr>
+      <tr>
+        <th scope="row">3</th>
+        <td colspan="2">Larry the Bird</td>
+        <td>@twitter</td>
+      </tr>
+    </tbody>
+  </table>
 
 {% endblock %}
