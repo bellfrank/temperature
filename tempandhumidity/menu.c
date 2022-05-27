@@ -44,16 +44,18 @@ int main()
         int choice;
         int option;
 
-        printf("Temperature and Humidity Logs");
-        printf("Select Time Period to perform calculations: 2022-05-26 15:10:27 to 2022-05-26 16:34:27\n");
+        printf("Temperature and Humidity Database");
+
+         // User choice
+        printf("What would like you to analyze today? 1. Max, 2. Min, or 3. Average: ");
+        scanf("%d", &choice);
+        printf("Enter time range of the collected data: ex. 2022-05-26 15:10:27 to 2022-05-26 16:34:27\n");
+        printf("Date: ");
         scanf("%d-%d-%d %d:%d:%d to %d-%d-%d %d:%d:%d",&year,&month,&day,&hour,&minute,&second,&year2,&month2,&day2,&hour2,&minute2,&second2);
         
-        printf("Enter 1 for Temperature or 2 for Humidity: ");
+        printf("1.Temperature or 2.Humidity: ");
         scanf("%d", &option);
 
-        // User choice
-        printf("What would like you to find? 1. Max, 2. Min, or 3. Average: ");
-        scanf("%d", &choice);
 
 
         // setting up query
