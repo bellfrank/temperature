@@ -46,6 +46,14 @@ main img
     max-width: 100%;
 }
 
+.jumbotron {
+    background-color: #477bff;
+    color: #fff;
+    margin-bottom: 1rem;
+    padding: 1rem 1rem;
+    text-align: center;
+}
+
 
 /* Live status green circle */
 .blob.green {

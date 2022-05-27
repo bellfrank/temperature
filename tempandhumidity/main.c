@@ -50,7 +50,7 @@ int main()
         printf("Humidity:%lf\n", humidity);
         
         char query[100] = "";
-        sprintf(query, "insert into thlog (temperature, humidity, time) values (%lf, %lf, CURRENT_TIMESTAMP)", temperature, humidity);
+        sprintf(query, "insert into thlog2 (temperature, humidity, time) values (%lf, %lf, CURRENT_TIMESTAMP)", temperature, humidity);
         
         /* send SQL query */
         if (mysql_query(conn, query)){

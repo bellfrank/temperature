@@ -62,10 +62,16 @@ def index():
             
             # Query table
             try:
-                cur.execute("SELECT time,temperature from thlog where temperature = (SELECT MAX(temperature) FROM thlog WHERE time BETWEEN ? AND ?)", date)
+                date = request.form.get("date")
+                date2 = request.form.get("date2")
+                print(date)
+                print(date2)
+                cur.execute(f"SELECT time,temperature from thlog2 where temperature = (SELECT MAX(temperature) FROM thlog2 WHERE time BETWEEN '{date}' AND '{date2}')")
                 # Print Result-set
-                for (time, temperature) in cur:
-                    print(time,temperature)
+                dataform = cur
+                print(datetime.datetime(2022, 5, 27, 0, 50, 2))
+                print(dataform)
+                return render_template("index.html", cur=cur)
             
             except mariadb.Error as e:
                 print(f"Error: {e}")

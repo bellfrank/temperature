@@ -65,33 +65,33 @@ int main()
         {
             case 1:
                 if (option == 1){
-                    sprintf(query, "select time,temperature from thlog where temperature = (SELECT MAX(temperature) FROM thlog WHERE time BETWEEN '%d-%d-%d %d:%d:%d' AND '%d-%d-%d %d:%d:%d')",year,month,day,hour,minute,second,year2,month2,day2,hour2,minute2,second2);
+                    sprintf(query, "select time,temperature from thlog2 where temperature = (SELECT MAX(temperature) FROM thlog2 WHERE time BETWEEN '%d-%d-%d %d:%d:%d' AND '%d-%d-%d %d:%d:%d')",year,month,day,hour,minute,second,year2,month2,day2,hour2,minute2,second2);
                     
                 }
                 if (option == 2){
-                    sprintf(query, "select time,humidity from thlog where humidity = (SELECT MAX(humidity) FROM thlog WHERE time BETWEEN '%d-%d-%d %d:%d:%d' AND '%d-%d-%d %d:%d:%d')",year,month,day,hour,minute,second,year2,month2,day2,hour2,minute2,second2);
+                    sprintf(query, "select time,humidity from thlog2 where humidity = (SELECT MAX(humidity) FROM thlog2 WHERE time BETWEEN '%d-%d-%d %d:%d:%d' AND '%d-%d-%d %d:%d:%d')",year,month,day,hour,minute,second,year2,month2,day2,hour2,minute2,second2);
                     
                 }
                 break;
         
             case 2:
                 if (option == 1){
-                    sprintf(query, "select time,temperature from thlog where temperature = (SELECT MIN(temperature) FROM thlog WHERE time BETWEEN '%d-%d-%d %d:%d:%d' AND '%d-%d-%d %d:%d:%d')",year,month,day,hour,minute,second,year2,month2,day2,hour2,minute2,second2);
+                    sprintf(query, "select time,temperature from thlog2 where temperature = (SELECT MIN(temperature) FROM thlog2 WHERE time BETWEEN '%d-%d-%d %d:%d:%d' AND '%d-%d-%d %d:%d:%d')",year,month,day,hour,minute,second,year2,month2,day2,hour2,minute2,second2);
                     
                 }
                 if (option == 2){
-                    sprintf(query, "select time,humidity from thlog where humidity = (SELECT MIN(humidity) FROM thlog WHERE time BETWEEN '%d-%d-%d %d:%d:%d' AND '%d-%d-%d %d:%d:%d')",year,month,day,hour,minute,second,year2,month2,day2,hour2,minute2,second2);
+                    sprintf(query, "select time,humidity from thlog2 where humidity = (SELECT MIN(humidity) FROM thlog2 WHERE time BETWEEN '%d-%d-%d %d:%d:%d' AND '%d-%d-%d %d:%d:%d')",year,month,day,hour,minute,second,year2,month2,day2,hour2,minute2,second2);
                     
                 }
                 break;
         
             case 3:
                 if (option == 1){
-                    sprintf(query, "select AVG(temperature) FROM thlog WHERE time BETWEEN '%d-%d-%d %d:%d:%d' AND '%d-%d-%d %d:%d:%d'",year,month,day,hour,minute,second,year2,month2,day2,hour2,minute2,second2);
+                    sprintf(query, "select AVG(temperature) FROM thlog2 WHERE time BETWEEN '%d-%d-%d %d:%d:%d' AND '%d-%d-%d %d:%d:%d'",year,month,day,hour,minute,second,year2,month2,day2,hour2,minute2,second2);
                    
                 }
                 if (option == 2){
-                    sprintf(query, "select AVG(humidity) FROM thlog WHERE time BETWEEN '%d-%d-%d %d:%d:%d' AND '%d-%d-%d %d:%d:%d'",year,month,day,hour,minute,second,year2,month2,day2,hour2,minute2,second2);
+                    sprintf(query, "select AVG(humidity) FROM thlog2 WHERE time BETWEEN '%d-%d-%d %d:%d:%d' AND '%d-%d-%d %d:%d:%d'",year,month,day,hour,minute,second,year2,month2,day2,hour2,minute2,second2);
                     
                 }
                 break;
