@@ -1,16 +1,21 @@
 #!/usr/bin/python
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, Response
 from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
 from helpers import apology
 import datetime
 import sys
 import os
 import mariadb
+import cv2
 
 app = Flask(__name__)
 
+#initializing camera
+camera = cv2.VideoCapture(-1)
+
 # Ensure templates are auto-reloaded
 app.config["TEMPLATES_AUTO_RELOAD"] = True
+
 
 # Ensure responses aren't cached
 @app.after_request
@@ -98,6 +103,30 @@ def query():
 
     return jsonify(info) # returning a JSON response
 
+def gen_frames():
+    global camera
+    while True:
+        success, frame = camera.read()  # read the camera frame
+        if not success:
+            break
+        else:
+            ret, buffer = cv2.imencode('.jpg', frame)
+            frame = buffer.tobytes()
+            yield (b'--frame\r\n'
+                   b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')  # concat frame one by one and show result
+
+
+
+
+@app.route('/livestream')
+def livestream():
+    return render_template('livestream.html')
+
+@app.route('/video')
+def video():
+    return Response(gen_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
+
+
 def errorhandler(e):
     """Handle error"""
     if not isinstance(e, HTTPException):
@@ -110,4 +139,4 @@ for code in default_exceptions:
     app.errorhandler(code)(errorhandler)
 
 if __name__ == "__main__":
-   app.run(host='0.0.0.0', port=80, debug=True)
+   app.run(host='0.0.0.0', port=80)

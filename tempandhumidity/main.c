@@ -57,8 +57,9 @@ int main()
         char log_temp[16];
         char log_hum[16];
 
-        sprintf(log_temp, "Temp: %.2lf", temperature);
-        sprintf(log_hum, "Temp: %.2lf", humidity);
+        char ch=223;
+        sprintf(log_temp, "Temp: %.2lf %cF", temperature,ch);
+        sprintf(log_hum, "Humd: %.2lf %%", humidity);
 
         lcdPosition(lcd, 0, 0);
         lcdPuts(lcd, log_temp);

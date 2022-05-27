@@ -1,0 +1,10 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+    <h1>LIVESTREAM</h1>
+    <div>
+        <!-- filling src with frames from webcam -->
+        <img src="{{ url_for('video') }}" width="100%">
+    </div>
+{% endblock %}
