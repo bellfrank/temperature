@@ -9,22 +9,21 @@
       document.getElementById("demo").innerHTML = d.toLocaleTimeString();
     }
 
-  document.addEventListener('DOMContentLoaded', function() {
-    // Send a GET request to the URL
-    fetch('http://23.119.121.13/query')
-    // Put response into json form
-    .then(response => response.json())
-    .then(data => {
-        // Log data to the console
-        document.querySelector('#temp').innerHTML = data['temperature'];
-        document.querySelector('#humid').innerHTML = data['humidity'];
-        document.querySelector('#time').innerHTML = data['time'];
-        
-        console.log(data);
-        console.log(data['humidity']);
-        console.log(data['time']);
-    });
-});
+    setInterval(new_data, 5000);
+    var counter = 0;
+    function new_data(){
+      // Send a GET request to the URL
+      fetch('http://23.119.121.13/query')
+      // Put response into json form
+      .then(response => response.json())
+      .then(data => {
+          // Log data to the console
+          document.querySelector('#temp').innerHTML = data['temperature'];
+          document.querySelector('#humid').innerHTML = data['humidity'];
+          document.querySelector('#time').innerHTML = counter++;
+      });
+    }
+
 </script>
 
 <p id="demo" style="float: right;"></p>
