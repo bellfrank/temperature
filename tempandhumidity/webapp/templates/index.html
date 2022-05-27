@@ -8,6 +8,29 @@
       const d = new Date();
       document.getElementById("demo").innerHTML = d.toLocaleTimeString();
     }
+    
+  // const mariadb = require('mariadb');
+  // const pool = mariadb.createPool({
+  //     host: 'localhost', 
+  //     user:'frank', 
+  //     password: 'password',
+  //     database:'datalog',
+  // });
+  // console.log(pool)
+
+  // async function asyncFunction() {
+  //   let conn;
+  //   try {
+  //   conn = await pool.getConnection();
+  //   const rows = await conn.query("SELECT * FROM thlog2 ORDER BY id DESC LIMIT 1");
+  //   console.log(rows);
+
+  //   } catch (err) {
+  //   throw err;
+  //   } finally {
+  //   if (conn) return conn.end();
+  //   }
+  // }
 </script>
 
 <p id="demo" style="float: right;"></p>
