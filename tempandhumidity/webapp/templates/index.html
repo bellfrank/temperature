@@ -1,0 +1,19 @@
+{% extends "layout.html" %}
+
+{% block body %}
+<div class="blob"></div>
+
+<form action="/date" method="post">
+
+    <input autocomplete="off" autofocus name="date" placeholder="Date" type="text">
+    <select name="calculate">
+        <option disabled selected value="">Calculate</option>
+        <option value="Average">Average</option>
+        <option value="Mininimum">Mininimum</option>
+        <option value="Maximum">Maximum</option>
+    </select>
+    <input type="submit" value="Analyze">
+
+</form>
+
+{% endblock %}
