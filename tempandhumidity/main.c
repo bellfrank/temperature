@@ -44,7 +44,7 @@ int main()
     double humidity;
 
     while(TRUE){
-        
+
         dht11_dat(&temperature, &humidity);
         printf("Temp:%lf\n", temperature);
         printf("Humidity:%lf\n", humidity);
@@ -78,11 +78,9 @@ void dht11_dat(double *temp, double *humid)
     srand(time(NULL));
     int r = rand();
     double noise = (double) r / RAND_MAX - 0.5; // noise is [-0.5, 0.5]
-    printf("Noise: %lf\n", noise);
+    
     *temp = 60 - 20*cos(3.14*t/12) + 2*noise;
     *humid = 70 + 20*cos(3.14*t/12) + 5*noise;
-    printf("%lf\n", *temp);
-    printf("%lf\n", *humid);
 }
 
 // current time
