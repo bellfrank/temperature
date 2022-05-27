@@ -16,7 +16,13 @@
     .then(response => response.json())
     .then(data => {
         // Log data to the console
+        document.querySelector('#temp').innerHTML = data['temperature'];
+        document.querySelector('#humid').innerHTML = data['humidity'];
+        document.querySelector('#time').innerHTML = data['time'];
+        
         console.log(data);
+        console.log(data['humidity']);
+        console.log(data['time']);
     });
 });
 </script>
@@ -29,23 +35,19 @@
 <table class="table table-hover">
   <thead>
     <tr>
-      <th scope="col"><div class="blob green" id=>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Live</div></th>
+      <th scope="col"><div class="blob green" id=>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Live</div></th>
       <th scope="col">Temperature</th>
       <th scope="col">Humidity</th>
       <th scope="col">Timestamp</th>
     </tr>
   </thead>
-  
-  <tbody>
-
-  {% for item in cur %}
+<tbody>
     <tr>
-      <th scope="row">1</th>
-      <td>{{ item[0] }}</td>
-      <td>{{item[1]}}</td>
-      <td>{{item[0] }}</td>
+      <th scope="row"></th>
+      <td id="temp"></td>
+      <td id="humid"></td>
+      <td id="time"></td>
     </tr>
-  {% endfor %}
   </tbody>
 </table>
 
