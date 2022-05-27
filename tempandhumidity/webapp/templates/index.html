@@ -9,7 +9,7 @@
       document.getElementById("demo").innerHTML = d.toLocaleTimeString();
     }
 
-    setInterval(new_data, 5000);
+    setInterval(new_data, 1000);
     var counter = 0;
     function new_data(){
       // Send a GET request to the URL
@@ -43,9 +43,9 @@
 <tbody>
     <tr>
       <th scope="row"></th>
-      <td id="temp"></td>
-      <td id="humid"></td>
-      <td id="time"></td>
+      <td id="temp">79.673642</td>
+      <td id="humid">49.495453</td>
+      <td id="time">Fetching</td>
     </tr>
   </tbody>
 </table>

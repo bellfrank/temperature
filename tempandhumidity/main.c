@@ -1,11 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <wiringPi.h>         
-#include <lcd.h>               
+#include <wiringPi.h>
+#include <lcd.h>
 #include <time.h>
 #include <math.h>
 #include <mysql/mysql.h>
-
+#include <wiringPi.h>
 
 
 //USE WIRINGPI PIN NUMBERS
@@ -40,24 +40,39 @@ int main()
         exit(1);
     }
 
+    int lcd;
+    wiringPiSetup();
+    lcd = lcdInit (2, 16, 4, LCD_RS, LCD_E, LCD_D4, LCD_D5, LCD_D6, LCD_D7, 0, 0, 0, 0);
+
     double temperature;
     double humidity;
 
     while(TRUE){
 
         dht11_dat(&temperature, &humidity);
-        printf("Temp:%lf\n", temperature);
-        printf("Humidity:%lf\n", humidity);
-        
+
+        printf("Temp: %.2lf\n", temperature);
+        printf("Humid: %.2lf\n", humidity);
+
+        char log_temp[16];
+        char log_hum[16];
+
+        sprintf(log_temp, "Temp: %.2lf", temperature);
+        sprintf(log_hum, "Temp: %.2lf", humidity);
+
+        lcdPosition(lcd, 0, 0);
+        lcdPuts(lcd, log_temp);
+        lcdPosition(lcd, 0, 1);
+        lcdPuts(lcd, log_hum);
         char query[100] = "";
         sprintf(query, "insert into thlog2 (temperature, humidity, time) values (%lf, %lf, CURRENT_TIMESTAMP)", temperature, humidity);
-        
+
         /* send SQL query */
         if (mysql_query(conn, query)){
             fprintf(stderr, "%s\n", mysql_error(conn));
             exit(1);
         }
-        
+
         sleep(1);
     }
 
@@ -78,7 +93,7 @@ void dht11_dat(double *temp, double *humid)
     srand(time(NULL));
     int r = rand();
     double noise = (double) r / RAND_MAX - 0.5; // noise is [-0.5, 0.5]
-    
+
     *temp = 60 - 20*cos(3.14*t/12) + 2*noise;
     *humid = 70 + 20*cos(3.14*t/12) + 5*noise;
 }
