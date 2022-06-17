@@ -8,6 +8,7 @@ import os
 import mariadb
 import cv2
 from gpiozero import LED
+import time
 # import pytz
 
 led = LED(3)
@@ -127,6 +128,7 @@ def query():
 def gen_frames():
     global camera
     while True:
+        
         success, frame = camera.read()  # read the camera frame
         if not success:
             break
