@@ -7,6 +7,12 @@ import sys
 import os
 import mariadb
 import cv2
+from gpiozero import LED
+# import pytz
+
+led = LED(3)
+led.off()
+light_status = False
 
 app = Flask(__name__)
 
@@ -25,27 +31,7 @@ def after_request(response):
     response.headers["Pragma"] = "no-cache"
     return response
 
-# Connect to MariaDB Platform
-try:
-    conn = mariadb.connect(
-        user="frank",
-        password="password",
-        host="localhost",
-        database="datalog"
-        )
 
-except mariadb.Error as e:
-    print(f"Error connecting to MariaDB Platform: {e}")
-    sys.exit(1)
-
-# Get Cursor
-cur = conn.cursor()
-
-
-
-
-# Close Connection
-# conn.close()
 
 @app.route("/")
 def hello():
@@ -81,25 +67,60 @@ def index():
     else:
         return render_template("index.html")
 
+
+@app.route("/lights", methods=["GET"])
+def lights():
+    global light_status
+    global led
+
+    if light_status == False:
+        led.on()
+        light_status = True
+    else:
+        led.off()
+        light_status = False
+    
+    return ('', 204)
+    
 #API CALL
 @app.route("/query", methods=["GET"])
 def query():
+
+    # Connect to MariaDB Platform
+    try:
+        conn = mariadb.connect(
+            user="frank",
+            password="password",
+            host="localhost",
+            database="datalog"
+            )
+
+    except mariadb.Error as e:
+        print(f"Error connecting to MariaDB Platform: {e}")
+        sys.exit(1)
+
+    # Get Cursor
+    cur = conn.cursor()
+
     # Query table
     try:
         cur.execute("SELECT * FROM thlog2 ORDER BY id DESC LIMIT 1")
         print(cur)
         for (temperature, humidity, time, id) in cur:
             pass
-
+        
         # Creating dictionary to send back in JSON form
-        info = {"temperature":temperature,
-            "humidity":humidity,
+        info = {"temperature":str(round(temperature, 2)) + " °F",
+            "humidity":str(round(humidity, 2)) + " %",
             "time":time,
             "id":id
         }
     
     except mariadb.Error as e:
                 print(f"Error: {e}")
+    
+    # Close Connection
+    conn.close()
 
     return jsonify(info) # returning a JSON response
 

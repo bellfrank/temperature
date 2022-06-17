@@ -44,19 +44,18 @@ int main()
         int choice;
         int option;
 
-        printf("Temperature and Humidity Database");
+        printf("\nTemperature and Humidity Database\n");
 
          // User choice
-        printf("What would like you to analyze today? 1. Max, 2. Min, or 3. Average: ");
-        scanf("%d", &choice);
-        printf("Enter time range of the collected data: ex. 2022-05-26 15:10:27 to 2022-05-26 16:34:27\n");
+        printf("\nEnter a time range: ex. 2022-05-26 15:10:27 to 2022-05-26 16:34:27\n");
         printf("Date: ");
         scanf("%d-%d-%d %d:%d:%d to %d-%d-%d %d:%d:%d",&year,&month,&day,&hour,&minute,&second,&year2,&month2,&day2,&hour2,&minute2,&second2);
+
+        printf("What would like you to find? 1. Max, 2. Min, or 3. Average: ");
+        scanf("%d", &choice);
         
-        printf("1.Temperature or 2.Humidity: ");
+        printf("What data are you interested in? 1.Temperature or 2.Humidity: ");
         scanf("%d", &option);
-
-
 
         // setting up query
         char query[200] = "";
@@ -66,33 +65,33 @@ int main()
             case 1:
                 if (option == 1){
                     sprintf(query, "select time,temperature from thlog2 where temperature = (SELECT MAX(temperature) FROM thlog2 WHERE time BETWEEN '%d-%d-%d %d:%d:%d' AND '%d-%d-%d %d:%d:%d')",year,month,day,hour,minute,second,year2,month2,day2,hour2,minute2,second2);
-                    
+                    printf("The max temperature was: ");
                 }
                 if (option == 2){
                     sprintf(query, "select time,humidity from thlog2 where humidity = (SELECT MAX(humidity) FROM thlog2 WHERE time BETWEEN '%d-%d-%d %d:%d:%d' AND '%d-%d-%d %d:%d:%d')",year,month,day,hour,minute,second,year2,month2,day2,hour2,minute2,second2);
-                    
+                    printf("The max humidity was: ");
                 }
                 break;
         
             case 2:
                 if (option == 1){
                     sprintf(query, "select time,temperature from thlog2 where temperature = (SELECT MIN(temperature) FROM thlog2 WHERE time BETWEEN '%d-%d-%d %d:%d:%d' AND '%d-%d-%d %d:%d:%d')",year,month,day,hour,minute,second,year2,month2,day2,hour2,minute2,second2);
-                    
+                    printf("The minimum temperature was: ");
                 }
                 if (option == 2){
                     sprintf(query, "select time,humidity from thlog2 where humidity = (SELECT MIN(humidity) FROM thlog2 WHERE time BETWEEN '%d-%d-%d %d:%d:%d' AND '%d-%d-%d %d:%d:%d')",year,month,day,hour,minute,second,year2,month2,day2,hour2,minute2,second2);
-                    
+                    printf("The minimum humidity was: ");
                 }
                 break;
         
             case 3:
                 if (option == 1){
                     sprintf(query, "select AVG(temperature) FROM thlog2 WHERE time BETWEEN '%d-%d-%d %d:%d:%d' AND '%d-%d-%d %d:%d:%d'",year,month,day,hour,minute,second,year2,month2,day2,hour2,minute2,second2);
-                   
+                    printf("The average tempearture was: ");
                 }
                 if (option == 2){
                     sprintf(query, "select AVG(humidity) FROM thlog2 WHERE time BETWEEN '%d-%d-%d %d:%d:%d' AND '%d-%d-%d %d:%d:%d'",year,month,day,hour,minute,second,year2,month2,day2,hour2,minute2,second2);
-                    
+                    printf("The the average humidity was: ");
                 }
                 break;
                 

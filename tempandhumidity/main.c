@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include <wiringPi.h>
 #include <lcd.h>
 #include <time.h>
@@ -22,24 +23,8 @@ void dht11_dat(double *temp, double *humid);
 
 int main()
 {
-    MYSQL *conn;
-    MYSQL_RES *res;
-    MYSQL_ROW row;
 
-    /* Server Information */
-    char *server = "localhost";
-    char *user = "frank";
-    char *password = "password";
-    char *database = "datalog";
-
-    conn = mysql_init(NULL);
-
-    /* Connect to database */
-    if (!mysql_real_connect(conn, server, user, password, database, 0, NULL, 0)){
-        fprintf(stderr, "%s\n", mysql_error(conn));
-        exit(1);
-    }
-
+    
     int lcd;
     wiringPiSetup();
     lcd = lcdInit (2, 16, 4, LCD_RS, LCD_E, LCD_D4, LCD_D5, LCD_D6, LCD_D7, 0, 0, 0, 0);
@@ -48,10 +33,26 @@ int main()
     double humidity;
 
     while(TRUE){
+        MYSQL *conn;
+        MYSQL_RES *res;
+        MYSQL_ROW row;
 
+        /* Server Information */
+        char *server = "localhost";
+        char *user = "frank";
+        char *password = "password";
+        char *database = "datalog";
+        conn = mysql_init(NULL);
+        
+        /* Connect to database */
+        if (!mysql_real_connect(conn, server, user, password, database, 0, NULL, 0)){
+            fprintf(stderr, "%s\n", mysql_error(conn));
+            exit(1);
+        }
         dht11_dat(&temperature, &humidity);
 
         printf("Temp: %.2lf\n", temperature);
+
         printf("Humid: %.2lf\n", humidity);
 
         char log_temp[16];
@@ -66,19 +67,30 @@ int main()
         lcdPosition(lcd, 0, 1);
         lcdPuts(lcd, log_hum);
         char query[100] = "";
-        sprintf(query, "insert into thlog2 (temperature, humidity, time) values (%lf, %lf, CURRENT_TIMESTAMP)", temperature, humidity);
 
+        sprintf(query, "insert into thlog2 (temperature, humidity, time) values (%lf, %lf, CURRENT_TIMESTAMP)", temperature, humidity);
         /* send SQL query */
         if (mysql_query(conn, query)){
             fprintf(stderr, "%s\n", mysql_error(conn));
             exit(1);
         }
+        printf("%s", "HI");
 
-        sleep(1);
+
+
+
+        // /* close connection */
+
+        // mysql_free_result(res);
+        mysql_close(conn);
+
+        sleep(10);
     }
 
     return 0;
 }
+
+
 
 
 // Generates temperature and humidity

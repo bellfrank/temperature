@@ -9,7 +9,7 @@
       document.getElementById("demo").innerHTML = d.toLocaleTimeString();
     }
 
-    setInterval(new_data, 1000);
+    setInterval(new_data, 10000);
     var counter = 0;
     function new_data(){
       // Send a GET request to the URL
@@ -20,21 +20,44 @@
           // Log data to the console
           document.querySelector('#temp').innerHTML = data['temperature'];
           document.querySelector('#humid').innerHTML = data['humidity'];
-          document.querySelector('#time').innerHTML = counter++;
+          document.querySelector('#time').innerHTML = data['time'];
       });
     }
 
 </script>
 
-<p id="demo" style="float: right;"></p>
-<br>
-<br>
-<br>
+<!-- <p id="demo" style="float: right;"></p> -->
+<script>
 
+  function light(){
+    // Send a GET request to the URL
+    fetch('http://23.119.121.13/lights')
+    const lightswitch = document.querySelector('.custom-control-label');
+    if (lightswitch.innerHTML == "Turn off light"){
+      lightswitch.innerHTML = "Turn on light";
+    }
+    else{
+      lightswitch.innerHTML = "Turn off light";
+    }
+  }
+</script>
+<h2>Livestream</h2>
+  <div>
+      <!-- filling src with frames from webcam -->
+      <img src="{{ url_for('video') }}" width="50%">
+      <div class="custom-control custom-switch">
+        <input type="checkbox" class="custom-control-input" id="customSwitch1" onclick="light()">
+        <br>
+        <label class="custom-control-label" for="customSwitch1">Turn on Light</label>
+      </div>
+      
+  </div>
+
+
+<h4 style="text-align: left;">Live Data</h4><h4 class="blob green"></h4>
 <table class="table table-hover">
   <thead>
     <tr>
-      <th scope="col"><div class="blob green" id=>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Live</div></th>
       <th scope="col">Temperature</th>
       <th scope="col">Humidity</th>
       <th scope="col">Timestamp</th>
@@ -42,24 +65,23 @@
   </thead>
 <tbody>
     <tr>
-      <th scope="row"></th>
-      <td id="temp">79.673642</td>
-      <td id="humid">49.495453</td>
-      <td id="time">Fetching</td>
+      <td id="temp">Fetching...</td>
+      <td id="humid">Fetching...</td>
+      <td id="time">Fetching...<span></span></td>
     </tr>
   </tbody>
 </table>
 
 <br>
 <br>
-
+<h2>Data Analysis</h2>
 <br>
 <br>
 <form action="/date" method="post">
     <label>From</label>
-    <input autocomplete="off" autofocus name="date"  type="datetime-local" required="true"  min="2022-05-27T00:00" >
+    <input autocomplete="off" autofocus name="date"  type="datetime-local" required="true"  min="2022-05-26T00:00" >
     <label>to</label>
-    <input autocomplete="off" autofocus name="date2"  type="datetime-local" required="true" max="2022-05-27T12:00">
+    <input autocomplete="off" autofocus name="date2"  type="datetime-local" required="true" max="2022-05-29T12:00">
     <p></p>
     <select name="data" required="true">
         <option disabled selected value="">Data</option>
@@ -72,7 +94,7 @@
         <option value="Mininimum">Mininimum</option>
         <option value="Maximum">Maximum</option>
     </select>
-    <input type="submit" value="Analyze">
+    <input type="submit"class="btn btn-primary" value="Analyze" disabled="true">
 
 </form>
 
@@ -80,7 +102,6 @@
 <br>
 <br>
 <br>
-<h2>Data Analysis</h2>
 <table class="table table-hover">
     <thead>
       <tr>

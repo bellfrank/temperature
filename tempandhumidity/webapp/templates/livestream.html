@@ -2,9 +2,23 @@
 
 {% block body %}
 
-    <h1>LIVESTREAM</h1>
+<script>
+
+    function light(){
+      // Send a GET request to the URL
+      fetch('http://23.119.121.13/lights')
+    }
+</script>
+
+<div class="custom-control custom-switch">
+    <input type="checkbox" class="custom-control-input" id="customSwitch1" onclick="light()">
+    <label class="custom-control-label" for="customSwitch1">Turn on Light</label>
+</div>
     <div>
+        
+        <h1 class="blob green"></h1>
         <!-- filling src with frames from webcam -->
-        <img src="{{ url_for('video') }}" width="100%">
+        <img src="{{ url_for('video') }}" width="75%">
     </div>
+    <footer> Try refreshing the page if stream freezes!</footer>
 {% endblock %}
