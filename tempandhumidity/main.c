@@ -84,7 +84,7 @@ int main()
         // mysql_free_result(res);
         mysql_close(conn);
 
-        sleep(10);
+        sleep(5);
     }
 
     return 0;

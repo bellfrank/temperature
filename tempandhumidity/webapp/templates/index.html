@@ -2,14 +2,15 @@
 
 {% block body %}
 <script>
-    setInterval(myTimer, 1000);
+    // setInterval(myTimer, 1000);
     
-    function myTimer() {
-      const d = new Date();
-      document.getElementById("demo").innerHTML = d.toLocaleTimeString();
-    }
+    // function myTimer() {
+    //   const d = new Date();
+    //   document.getElementById("demo").innerHTML = d.toLocaleTimeString();
+    // }
 
-    setInterval(new_data, 10000);
+    setInterval(new_data, 3000);
+  
     var counter = 0;
     function new_data(){
       // Send a GET request to the URL
@@ -24,10 +25,50 @@
       });
     }
 
-</script>
 
-<!-- <p id="demo" style="float: right;"></p> -->
-<script>
+    // SliDER FEATURE
+//     document.addEventListener('DOMContentLoaded', function() {
+//       var slider = document.querySelector("#myRange");
+//       var output = document.querySelector("#rate");
+//       output.innerHTML = slider.value; // Display the default slider value
+
+//       // Update the current slider value (each time you drag the slider handle)
+//       slider.oninput = function() {
+//         output.innerHTML = this.value;
+//       }
+// });
+
+
+// DATABASE QUERY ANALYSIS
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelector('form').onsubmit = function() {
+      var data = new FormData();
+      data.append("date", document.querySelector("#date").value);
+      data.append("date2", document.querySelector("#date2").value);
+      data.append("data", document.querySelector("#data").value);
+      data.append("calculate", document.querySelector("#calculate").value);
+
+        fetch('http://23.119.121.13/analysis', { method: "POST", body: data })
+        // Put response into json form
+        .then(response => response.json())
+        .then(data => {
+          console.log(data);
+          document.querySelector('#temp2').innerHTML = data['temperature'];
+          document.querySelector('#humid2').innerHTML = data['humidity'];
+          document.querySelector('#time2').innerHTML = data['time'];
+
+        })
+
+        // Catch any errors and log them to the console
+        .catch(error => {
+            console.log('Error:', error);
+        });
+        // Prevent default submission
+        return false;
+    }
+});
+
+
 
   function light(){
     // Send a GET request to the URL
@@ -40,7 +81,58 @@
       lightswitch.innerHTML = "Turn off light";
     }
   }
+
+
+
+  // Graphs JS
+
+  // var myChart = new Chart("myChart", {
+  //   type: "line",
+  //   data: {},
+  //   options: {}
+  // });
+  document.addEventListener('DOMContentLoaded', function() {
+
+    fetch('http://23.119.121.13/querytable')
+        // Put response into json form
+        .then(response => response.json())
+        .then(data => {
+          console.log(data)
+          var xValues = data[1];
+          var data = data[0];
+
+          new Chart("myChart", {
+            type: "line",
+            data: {
+              labels: xValues,
+              datasets: [{
+                label: "Temperature",
+                data: data,
+                borderColor: "red",
+                fill: false
+              }]
+            },
+            options: {
+              legend: {display: true}
+            }
+          });
+      })
+
+    // Catch any errors and log them to the console
+    .catch(error => {
+        console.log('Error:', error);
+    });
+  });
+
+  function addData(chart, label, data) {
+    chart.data.datasets[0].data[2] = 50; // Would update the first dataset's value of 'March' to be 50
+    chart.update();
+}
+
 </script>
+
+
+
 <h2>Livestream</h2>
   <div>
       <!-- filling src with frames from webcam -->
@@ -51,7 +143,12 @@
         <label class="custom-control-label" for="customSwitch1">Turn on Light</label>
       </div>
       
-  </div>
+  <!-- </div>
+  <div class="slidecontainer">
+    <p>Data Capture Rate</p>
+    <input type="range" min="1" max="10" value="5" class="slider" id="myRange">
+    <p>Rate: <span id="rate"></span>s</p>
+  </div> -->
 
 
 <h4 style="text-align: left;">Live Data</h4><h4 class="blob green"></h4>
@@ -74,51 +171,94 @@
 
 <br>
 <br>
-<!-- <h2>Data Analysis</h2>
+
+<canvas id="myChart" style="width:100%;max-width:700px"></canvas>
+
 <br>
+
+<h4 style="text-align: left;"> Perform Data Analysis</h4>
 <br>
-<form action="/date" method="post">
+
+<form method="post">
     <label>From</label>
-    <input autocomplete="off" autofocus name="date"  type="datetime-local" required="true"  min="2022-05-26T00:00" >
+    <input autocomplete="off" autofocus id="date" name="date"  type="datetime-local" required="true"  min="2022-05-26T00:00" value="2022-05-26T00:00" >
     <label>to</label>
-    <input autocomplete="off" autofocus name="date2"  type="datetime-local" required="true" max="2022-05-29T12:00">
+    <input autocomplete="off" autofocus id="date2" name="date2"  type="datetime-local" required="true" value="2022-06-19T00:00" >
     <p></p>
-    <select name="data" required="true">
+    <select name="data" id="data" required="true">
         <option disabled selected value="">Data</option>
         <option value="Temperature">Temperature</option>
         <option value="Humidity">Humidity</option>
     </select>
-    <select name="calculate" required="true">
+    <select name="calculate" id="calculate" required="true">
         <option disabled selected value="">Calculate</option>
         <option value="Average">Average</option>
-        <option value="Mininimum">Mininimum</option>
+        <option value="Minimum">Minimum</option>
         <option value="Maximum">Maximum</option>
     </select>
-    <input type="submit"class="btn btn-primary" value="Analyze" disabled="true">
+    <input type="submit" class="btn btn-primary" value="Analyze" id="analyzebutton">
 
 </form>
 
 <br>
 <br>
-<br>
-<br>
-<table class="table table-hover">
+<table class="table table-hover" display="none">
     <thead>
       <tr>
-        <th scope="col">Recent Data</th>
+        <th scope="col">Humidity</th>
         <th scope="col">Temperature</th>
         <th scope="col">Timestamp</th>
       </tr>
     </thead>
     <tbody>
-    {% for item in cur %}
       <tr>
-        <th scope="row">1</th>
-        <td>{{ item[0] }}</td>
-        <td>{{item[1]}}</td>
+        <td><span id="humid2"></span></td>
+        <td><span id="temp2"></span></td>
+        <td><span id="time2"></span></td>
       </tr>
-    {% endfor %}
     </tbody>
-  </table> -->
+  </table>
+
+  <style>
+    .my-custom-scrollbar {
+position: relative;
+height: 200px;
+overflow: auto;
+}
+.table-wrapper-scroll-y {
+display: block;
+}
+  </style>
+
+
+  <br>
+  <br>
+  <br>
+  <br>
+  <h2>Recent Data History</h2>
+  <div class="table-wrapper-scroll-y my-custom-scrollbar">
+
+    <table class="table table-bordered table-striped mb-0">
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Temperature</th>
+          <th scope="col">Humidity</th>
+          <th scope="col">Timestamp</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for log in datalogs %}
+          <tr>
+            <th scope="row">{{ log['id'] }}</th>
+            <td>{{ log['temperature'] }}</td>
+            <td>{{ log['humidity'] }}</td>
+            <td>{{ log['time'] }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  
+  </div>
 
 {% endblock %}
