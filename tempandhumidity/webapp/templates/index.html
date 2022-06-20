@@ -10,6 +10,7 @@
     // }
 
     setInterval(new_data, 3000);
+    setInterval(raspi_temp, 5000);
   
     var counter = 0;
     function new_data(){
@@ -168,9 +169,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Raspberry Pi internal temperature fetch
 // DATABASE QUERY ANALYSIS
-document.addEventListener('DOMContentLoaded', function() {
 
-        fetch('http://23.119.121.13/measure_temp')
+function raspi_temp(){
+    fetch('http://23.119.121.13/measure_temp')
         // Put response into json form
         .then(response => response.json())
         .then(data => {
@@ -181,7 +182,7 @@ document.addEventListener('DOMContentLoaded', function() {
         .catch(error => {
             console.log('Error:', error);
         });
-});
+      };
 
 
 </script>
