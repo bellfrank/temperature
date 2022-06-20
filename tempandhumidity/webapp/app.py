@@ -345,7 +345,7 @@ def video():
 # Raspberry Pi Internal Temperature
 @app.route("/measure_temp")
 def measure_temp():
-        temp = os.popen("vcgencmd measure_temp").readline()
+        temp = os.popen("""vcgencmd measure_temp | awk -F "[=']" '{print($2 * 1.8)+32}'""").readline()
         return jsonify(temp)
 
 
