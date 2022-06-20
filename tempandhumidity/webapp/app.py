@@ -331,6 +331,7 @@ def gen_frames():
                    b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')  # concat frame one by one and show result
 
 
+
 @app.route('/livestream')
 def livestream():
     return render_template('livestream.html')
@@ -338,6 +339,14 @@ def livestream():
 @app.route('/video')
 def video():
     return Response(gen_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
+
+
+
+# Raspberry Pi Internal Temperature
+@app.route("/measure_temp")
+def measure_temp():
+        temp = os.popen("vcgencmd measure_temp").readline()
+        return jsonify(temp)
 
 
 def errorhandler(e):
