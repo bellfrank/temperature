@@ -120,6 +120,8 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
           });
+          
+ 
       })
 
     // Catch any errors and log them to the console
@@ -128,8 +130,14 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 
+  // Update graph feature
+  
+
   function addData(chart, label, data) {
-    chart.data.datasets[0].data[2] = 50; // Would update the first dataset's value of 'March' to be 50
+    chart.data.labels.push(label);
+    chart.data.datasets.forEach((dataset) => {
+        dataset.data.push(data);
+    });
     chart.update();
 }
 
