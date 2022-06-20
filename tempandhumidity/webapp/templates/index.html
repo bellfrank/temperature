@@ -115,6 +115,7 @@ document.addEventListener('DOMContentLoaded', function() {
             options: {
               legend: {display: true}
             }
+            
           });
       })
 
@@ -129,6 +130,41 @@ document.addEventListener('DOMContentLoaded', function() {
     chart.update();
 }
 
+
+document.addEventListener('DOMContentLoaded', function() {
+  fetch('http://23.119.121.13/queryhumidity')
+      // Put response into json form
+      .then(response => response.json())
+      .then(data => {
+        console.log(data)
+        var xValues = data[1];
+        var data = data[0];
+
+        new Chart("myHumid", {
+          type: "line",
+          data: {
+            labels: xValues,
+            datasets: [{
+              label: "Humidity",
+              data: data,
+              borderColor: "blue",
+              fill: false
+            }]
+          },
+          options: {
+            legend: {display: true}
+          }
+          
+        });
+    })
+
+  // Catch any errors and log them to the console
+  .catch(error => {
+      console.log('Error:', error);
+});
+});
+
+
 </script>
 
 
@@ -141,6 +177,7 @@ document.addEventListener('DOMContentLoaded', function() {
         <input type="checkbox" class="custom-control-input" id="customSwitch1" onclick="light()">
         <br>
         <label class="custom-control-label" for="customSwitch1">Turn on Light</label>
+    
       </div>
       
   <!-- </div>
@@ -170,11 +207,6 @@ document.addEventListener('DOMContentLoaded', function() {
 </table>
 
 <br>
-<br>
-
-<canvas id="myChart" style="width:100%;max-width:700px"></canvas>
-
-<br>
 
 <h4 style="text-align: left;"> Perform Data Analysis</h4>
 <br>
@@ -192,7 +224,7 @@ document.addEventListener('DOMContentLoaded', function() {
     </select>
     <select name="calculate" id="calculate" required="true">
         <option disabled selected value="">Calculate</option>
-        <option value="Average">Average</option>
+        <!-- <option value="Average">Average</option> -->
         <option value="Minimum">Minimum</option>
         <option value="Maximum">Maximum</option>
     </select>
@@ -218,6 +250,17 @@ document.addEventListener('DOMContentLoaded', function() {
       </tr>
     </tbody>
   </table>
+<br>
+<br>
+<br>
+<h4 style="text-align: left;"> Temperature Plot</h4>
+<canvas id="myChart" style="width:100%;max-width:900px"></canvas>
+<br>
+
+<h4 style="text-align: left;"> Humidity Plot</h4>
+<canvas id="myHumid" style="width:100%;max-width:900px"></canvas>
+
+
 
   <style>
     .my-custom-scrollbar {
@@ -260,5 +303,8 @@ display: block;
     </table>
   
   </div>
+  <br>
+  <br>
+
 
 {% endblock %}

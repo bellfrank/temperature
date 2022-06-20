@@ -233,16 +233,20 @@ def querytable():
 
         # Query table
         try:
-            cur.execute("SELECT * FROM thlog2 ORDER BY id DESC LIMIT 100")
+            cur.execute("SELECT * FROM thlog2 ORDER BY id DESC LIMIT 30000")
             templogs = []
             datelogs = []
             
-            i = 1
+            k = 0
             for (temperature, humidity, time, id) in cur:
+                k += 1
+                if (k % 500 != 0):
+                    continue
                 
                 templogs.append(format(round(temperature, 2), '.2f'))
                 datelogs.append(time)
-            
+            templogs.reverse()
+            datelogs.reverse()
             newlogs = [templogs, datelogs]
             print(newlogs)
         
@@ -263,6 +267,54 @@ def querytable():
         
         return jsonify(newlogs) # returning a JSON response
 
+
+# table query
+@app.route("/queryhumidity")
+def queryhumidity():
+        
+        try:
+            conn = mariadb.connect(
+                user="frank",
+                password="password",
+                host="localhost",
+                database="datalog"
+                )
+
+        except mariadb.Error as e:
+            print(f"Error connecting to MariaDB Platform: {e}")
+            sys.exit(1)
+
+        # Get Cursor
+        cur = conn.cursor()
+
+        # Query table
+        try:
+            cur.execute("SELECT * FROM thlog2 ORDER BY id DESC LIMIT 30000")
+            humiditylogs = []
+            datelogs = []
+            
+            k = 0
+            for (temperature, humidity, time, id) in cur:
+                k += 1
+                if (k % 500 != 0):
+                    continue
+                
+                humiditylogs.append(format(round(humidity, 2), '.2f'))
+                datelogs.append(time)
+
+            humiditylogs.reverse()
+            datelogs.reverse()
+            newlogs = [humiditylogs, datelogs]
+    
+        
+        except mariadb.Error as e:
+                    print(f"Error: {e}")
+        
+        # Close Connection
+        conn.close()
+
+        
+        return jsonify(newlogs) # returning a JSON response
 
 
 def gen_frames():
