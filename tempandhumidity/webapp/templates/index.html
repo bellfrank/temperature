@@ -174,7 +174,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Put response into json form
         .then(response => response.json())
         .then(data => {
-          console.log(data)
+          document.querySelector('#raspitemp').innerHTML = data;
         })
 
         // Catch any errors and log them to the console
