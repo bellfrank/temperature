@@ -343,18 +343,17 @@ def video():
 
 
 # Raspberry Pi Internal Temperature
-@app.route("/measure_temp")
+@app.route("/measuretemp")
 def measure_temp():
         temp = os.popen("""vcgencmd measure_temp | awk -F "[=']" '{print($2 * 1.8)+32}'""").readline()
+        print("inside measure temp")
         return jsonify(temp)
-
 
 def errorhandler(e):
     """Handle error"""
     if not isinstance(e, HTTPException):
         e = InternalServerError()
     return apology(e.name, e.code)
-
 
 # Listen for errors
 for code in default_exceptions:

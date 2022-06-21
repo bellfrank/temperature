@@ -10,7 +10,7 @@
     // }
 
     setInterval(new_data, 3000);
-    // setInterval(raspi_temp, 5000);
+    setInterval(raspi_temp, 5000);
   
     var counter = 0;
     function new_data(){
@@ -23,6 +23,7 @@
           document.querySelector('#temp').innerHTML = data['temperature'];
           document.querySelector('#humid').innerHTML = data['humidity'];
           document.querySelector('#time').innerHTML = data['time'];
+          document.querySelector('#totalogs').innerHTML = data['id'];
       });
     }
 
@@ -94,6 +95,7 @@ document.addEventListener('DOMContentLoaded', function() {
   //   data: {},
   //   options: {}
   // });
+  mychart = 0
   document.addEventListener('DOMContentLoaded', function() {
 
     fetch('http://23.119.121.13/querytable')
@@ -104,7 +106,7 @@ document.addEventListener('DOMContentLoaded', function() {
           var xValues = data[1];
           var data = data[0];
 
-          new Chart("myChart", {
+          mychart = new Chart("myChart", {
             type: "line",
             data: {
               labels: xValues,
@@ -130,15 +132,21 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 
+
+  // make function graph method
+
   // Update graph feature
   
 
-  function addData(chart, label, data) {
-    chart.data.labels.push(label);
-    chart.data.datasets.forEach((dataset) => {
-        dataset.data.push(data);
-    });
-    chart.update();
+  function addData() {
+    
+    // mychart.dataset.data.xValues.append(100)
+    // mychart.dataset.data.data.append(100)
+    // mychart.update();
+    mychart.data.labels.push("history")
+    mychart.data.datasets[0].data.push("1")
+    mychart.update()
+    console.log(mychart)
 }
 
 
@@ -178,21 +186,24 @@ document.addEventListener('DOMContentLoaded', function() {
 // Raspberry Pi internal temperature fetch
 // DATABASE QUERY ANALYSIS
 
-// function raspi_temp(){
-//     fetch('http://23.119.121.13/measure_temp')
-//         // Put response into json form
-//         .then(response => response.json())
-//         .then(data => {
-//           document.querySelector('#raspitemp').innerHTML = data;
-//         })
+function raspi_temp(){
+    fetch('http://23.119.121.13/measuretemp')
+        // Put response into json form
+        .then(response => response.json())
+        .then(data => {
+          document.querySelector('#raspitemp').innerHTML = data;
+        })
 
-//         // Catch any errors and log them to the console
-//         .catch(error => {
-//             console.log('Error:', error);
-//         });
-//       };
+        // Catch any errors and log them to the console
+        .catch(error => {
+            console.log('Error:', error);
+        });
+      };
 
-
+      function myFunction() {
+        var element = document.body;
+        element.classList.toggle("dark-mode");
+ }
 </script>
 
 
@@ -288,7 +299,7 @@ document.addEventListener('DOMContentLoaded', function() {
 <h4 style="text-align: left;"> Humidity Plot</h4>
 <canvas id="myHumid" style="width:100%;max-width:900px"></canvas>
 
-
+<button onclick="addData()">Add Data</button>
 
   <style>
     .my-custom-scrollbar {
@@ -306,7 +317,7 @@ display: block;
   <br>
   <br>
   <br>
-  <h2>Recent Data History</h2>
+  <h2 style="text-align: left;">Data History</h2>
   <div class="table-wrapper-scroll-y my-custom-scrollbar">
 
     <table class="table table-bordered table-striped mb-0">
@@ -333,9 +344,12 @@ display: block;
   </div>
   <br>
   <br>
-  <h2>Fun Facts</h2>
-  <h4>Total Logs: <span id="logtotal">0</span></h4>
-  <h4>Raspberry Pi Core Temperature: <span id="raspitemp">0</span></h4>
 
+
+
+  <h2 style="text-align: left;">Fun Facts</h2>
+  <p style="text-align: left;">Total Logs: <span id="totalogs">0</span></p>
+  <p style="text-align: left;">Raspberry Pi Core Temperature: <span id="raspitemp">0</span>°F</p>
+  <!-- <button onclick="myFunction()">Toggle dark mode</button> -->
 
 {% endblock %}

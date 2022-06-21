@@ -4,6 +4,8 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
+
+
 // console.log("hello")
 // const mariadb = require('mariadb');
 // const pool = mariadb.createPool({
