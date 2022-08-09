@@ -11,6 +11,7 @@ from gpiozero import LED
 import time
 from subprocess import call
 import csv
+import numpy as np
 
 # import pytz
 
@@ -91,9 +92,9 @@ def index():
 @app.route("/analysis", methods=["POST", "GET"])
 def analysis():
 # Data Analysis
-        print("INSIDE ANALYSssssIS")
+    
         date = request.form
-        print(date)
+    
         try:
             conn = mariadb.connect(
                 user="frank",
@@ -121,7 +122,7 @@ def analysis():
                 method = request.form.get("data").lower()
                 calculate = request.form.get("calculate").lower()
                 
-                print(date, date2, method, calculate)
+                # print(date, date2, method, calculate)
                 
                 if calculate == "maximum":
                     calculate = "MAX"
@@ -250,7 +251,7 @@ def querytable():
             templogs.reverse()
             datelogs.reverse()
             newlogs = [templogs, datelogs]
-            print(newlogs)
+            # print(newlogs)
         
         #     # Creating dictionary to send back in JSON form
         #     info = {"temperature":str(round(temperature, 2)) + " °F",
@@ -325,9 +326,22 @@ def gen_frames():
     while True:
         
         success, frame = camera.read()  # read the camera frame
+        # # inverting frames colors
+        # frame = 255 - frame
+        
+        # # flipping an image
+        # frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
+        # frame = np.flip(frame)
+        
+        # Converting image to grey per frame
+        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        
+
+
         if not success:
             break
         else:
+            # packs our image for faster networking protocols
             ret, buffer = cv2.imencode('.jpg', frame)
             frame = buffer.tobytes()
             yield (b'--frame\r\n'
@@ -407,4 +421,4 @@ for code in default_exceptions:
     app.errorhandler(code)(errorhandler)
 
 if __name__ == "__main__":
-   app.run( host='0.0.0.0', port=80)
+   app.run(host='0.0.0.0', port=80, debug=False)

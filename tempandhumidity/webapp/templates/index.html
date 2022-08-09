@@ -261,17 +261,56 @@ function raspi_temp(){
 </script>
 
 
-
-<h2>Livestream</h2>
-  <div>
-      <!-- filling src with frames from webcam -->
-      <img src="{{ url_for('video') }}" width="50%">
-      <div class="custom-control custom-switch">
+<div class="container">
+  <div class="row">
+    <div class="col">
+      <h2>Livestream</h2>
+        <div>
+            <!-- filling src with frames from webcam -->
+            <img src="{{ url_for('video') }}" width="100%">
+           
+        </div>
+    </div>
+    <div class="col">
+      <br>
+      <br>
+      <h4 style="text-align: left;">Live Data</h4><h4 class="blob green"></h4>
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th scope="col">Temperature</th>
+            <th scope="col">Humidity</th>
+            <th scope="col">Timestamp</th>
+          </tr>
+        </thead>
+      <tbody>
+          <tr>
+            <td id="temp">Fetching...</td>
+            <td id="humid">Fetching...</td>
+            <td id="time">Fetching...<span></span></td>
+          </tr>
+        </tbody>
+      </table>
+      <h4 style="text-align: left;">Settings</h4>
+      <div class="custom-control custom-switch" style="text-align: left;">
         <input type="checkbox" class="custom-control-input" id="customSwitch1" onclick="light()">
         <br>
         <label class="custom-control-label" for="customSwitch1">Turn on Light</label>
-    
       </div>
+
+      <div class="custom-control custom-radio">
+        <input type="radio" id="customRadio1" name="customRadio" class="custom-control-input">
+        <label class="custom-control-label" for="customRadio1">Greyscale</label>
+      </div>
+      <div class="custom-control custom-radio">
+        <input type="radio" id="customRadio2" name="customRadio" class="custom-control-input">
+        <label class="custom-control-label" for="customRadio2">Inverted</label>
+      </div>
+
+    </div>
+  </div>
+</div>
+
       
   <!-- </div>
   <div class="slidecontainer">
@@ -279,25 +318,6 @@ function raspi_temp(){
     <input type="range" min="1" max="10" value="5" class="slider" id="myRange">
     <p>Rate: <span id="rate"></span>s</p>
   </div> -->
-
-
-<h4 style="text-align: left;">Live Data</h4><h4 class="blob green"></h4>
-<table class="table table-hover">
-  <thead>
-    <tr>
-      <th scope="col">Temperature</th>
-      <th scope="col">Humidity</th>
-      <th scope="col">Timestamp</th>
-    </tr>
-  </thead>
-<tbody>
-    <tr>
-      <td id="temp">Fetching...</td>
-      <td id="humid">Fetching...</td>
-      <td id="time">Fetching...<span></span></td>
-    </tr>
-  </tbody>
-</table>
 
 <br>
 
