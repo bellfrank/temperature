@@ -134,19 +134,67 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
   // make function graph method
-
+  setInterval(addData, 2000);
   // Update graph feature
-  
-
   function addData() {
+
+    fetch('http://23.119.121.13/querytable')
+        // Put response into json form
+        .then(response => response.json())
+        .then(data => {
+          console.log(data)
+          var xValues = data[1];
+          var data = data[0];
+      
+          // // // Remove first element 
+          // mychart.data.labels.shift()
+          // mychart.data.datasets[0].data.shift()
+
+          // Append to last element
+          mychart.data.labels.push(xValues.slice(-1))
+          mychart.data.datasets[0].data.push(data.slice(-1))
+          mychart.update()
+          
+      })
+
+    // Catch any errors and log them to the console
+    .catch(error => {
+        console.log('Error:', error);
+    });
     
-    // mychart.dataset.data.xValues.append(100)
-    // mychart.dataset.data.data.append(100)
-    // mychart.update();
-    mychart.data.labels.push("history")
-    mychart.data.datasets[0].data.push("1")
-    mychart.update()
-    console.log(mychart)
+}
+
+
+
+// Adding Humidity 
+setInterval(addHumidity, 2000);
+
+function addHumidity() {
+
+fetch('http://23.119.121.13/queryhumidity')
+    // Put response into json form
+    .then(response => response.json())
+    .then(data => {
+      console.log(data)
+      var xValues = data[1];
+      var data = data[0];
+  
+      // // // Remove first element 
+      // mychart.data.labels.shift()
+      // mychart.data.datasets[0].data.shift()
+
+      // Append to last element
+      myhumid.data.labels.push(xValues.slice(-1))
+      myhumid.data.datasets[0].data.push(data.slice(-1))
+      myhumid.update()
+      
+  })
+
+// Catch any errors and log them to the console
+.catch(error => {
+    console.log('Error:', error);
+});
+
 }
 
 
@@ -159,7 +207,7 @@ document.addEventListener('DOMContentLoaded', function() {
         var xValues = data[1];
         var data = data[0];
 
-        new Chart("myHumid", {
+        myhumid = new Chart("myHumid", {
           type: "line",
           data: {
             labels: xValues,
@@ -203,6 +251,12 @@ function raspi_temp(){
       function myFunction() {
         var element = document.body;
         element.classList.toggle("dark-mode");
+ }
+
+
+ // Download CSV DATA
+ function download(){
+    fetch('http://23.119.121.13/download')
  }
 </script>
 
@@ -273,7 +327,7 @@ function raspi_temp(){
 
 <br>
 <br>
-<table class="table table-hover" display="none">
+<table id="analyzing_table" class="table table-hover" hidden>
     <thead>
       <tr>
         <th scope="col">Humidity</th>
@@ -299,7 +353,6 @@ function raspi_temp(){
 <h4 style="text-align: left;"> Humidity Plot</h4>
 <canvas id="myHumid" style="width:100%;max-width:900px"></canvas>
 
-<button onclick="addData()">Add Data</button>
 
   <style>
     .my-custom-scrollbar {
@@ -318,6 +371,8 @@ display: block;
   <br>
   <br>
   <h2 style="text-align: left;">Data History</h2>
+  <!-- <button class="btn btn-primary" style="float: right;" href="data.csv" download>Download Data</button> -->
+  <br>
   <div class="table-wrapper-scroll-y my-custom-scrollbar">
 
     <table class="table table-bordered table-striped mb-0">
@@ -340,7 +395,6 @@ display: block;
         {% endfor %}
       </tbody>
     </table>
-  
   </div>
   <br>
   <br>
@@ -348,8 +402,9 @@ display: block;
 
 
   <h2 style="text-align: left;">Fun Facts</h2>
-  <p style="text-align: left;">Total Logs: <span id="totalogs">0</span></p>
-  <p style="text-align: left;">Raspberry Pi Core Temperature: <span id="raspitemp">0</span>°F</p>
+  <p style="text-align: left;">Total Logs: <span style="color: green;" id="totalogs">0</span></p>
+  <p style="text-align: left;">Raspberry Pi Core Temperature: <span style="color:red;" id="raspitemp">0</span>°F</p>
+  <p style="text-align: left;">* panic if it reaches 185 °F</p>
   <!-- <button onclick="myFunction()">Toggle dark mode</button> -->
 
 {% endblock %}

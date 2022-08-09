@@ -10,6 +10,7 @@ import cv2
 from gpiozero import LED
 import time
 from subprocess import call
+import csv
 
 # import pytz
 
@@ -158,7 +159,7 @@ def analysis():
 def lights():
     global light_status
     global led
-
+    print("Inside")
     if light_status == False:
         led.on()
         light_status = True
@@ -233,15 +234,16 @@ def querytable():
 
         # Query table
         try:
-            cur.execute("SELECT * FROM thlog2 ORDER BY id DESC LIMIT 30000")
+            cur.execute("SELECT * FROM thlog2 ORDER BY id DESC LIMIT 100")
             templogs = []
             datelogs = []
             
             k = 0
             for (temperature, humidity, time, id) in cur:
-                k += 1
-                if (k % 500 != 0):
-                    continue
+                pass
+                # k += 1
+                # if (k % 100 != 0):
+                #     continue
                 
                 templogs.append(format(round(temperature, 2), '.2f'))
                 datelogs.append(time)
@@ -289,15 +291,16 @@ def queryhumidity():
 
         # Query table
         try:
-            cur.execute("SELECT * FROM thlog2 ORDER BY id DESC LIMIT 30000")
+            cur.execute("SELECT * FROM thlog2 ORDER BY id DESC LIMIT 100")
             humiditylogs = []
             datelogs = []
             
             k = 0
             for (temperature, humidity, time, id) in cur:
-                k += 1
-                if (k % 500 != 0):
-                    continue
+                pass
+                # k += 1
+                # if (k % 100 != 0):
+                #     continue
                 
                 humiditylogs.append(format(round(humidity, 2), '.2f'))
                 datelogs.append(time)
@@ -354,6 +357,50 @@ def errorhandler(e):
     if not isinstance(e, HTTPException):
         e = InternalServerError()
     return apology(e.name, e.code)
+
+
+
+# Download Data
+@app.route('/download')
+def download():
+
+     # Connect to MariaDB Platform
+    try:
+        conn = mariadb.connect(
+            user="frank",
+            password="password",
+            host="localhost",
+            database="datalog"
+            )
+
+    except mariadb.Error as e:
+        print(f"Error connecting to MariaDB Platform: {e}")
+        sys.exit(1)
+
+    # Get Cursor
+    cur = conn.cursor()
+
+    # Query table
+    try:
+        cur.execute("SELECT * FROM thlog2")
+
+    
+    except mariadb.Error as e:
+                print(f"Error: {e}")
+
+    with open("data.csv", "w") as file:
+        writer = csv.DictWriter(file, fieldnames=["id", "temperature", "humidity", "time"])
+        writer.writeheader()
+    
+    for (temperature, humidity, time, id) in cur:        
+        with open("data.csv", "a") as file:
+            writer = csv.DictWriter(file, fieldnames=["id", "temperature", "humidity", "time"])
+            writer.writerow({"id": id, "temperature": temperature, "humidity": humidity, "time": time })
+
+    # Close Connection
+    conn.close()
+
+    return render_template('index.html')
 
 # Listen for errors
 for code in default_exceptions:
