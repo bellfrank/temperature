@@ -2,12 +2,6 @@
 
 {% block body %}
 <script>
-    // setInterval(myTimer, 1000);
-    
-    // function myTimer() {
-    //   const d = new Date();
-    //   document.getElementById("demo").innerHTML = d.toLocaleTimeString();
-    // }
 
     setInterval(new_data, 3000);
     setInterval(raspi_temp, 5000);
@@ -26,20 +20,6 @@
           document.querySelector('#totalogs').innerHTML = data['id'];
       });
     }
-
-
-    // SliDER FEATURE
-//     document.addEventListener('DOMContentLoaded', function() {
-//       var slider = document.querySelector("#myRange");
-//       var output = document.querySelector("#rate");
-//       output.innerHTML = slider.value; // Display the default slider value
-
-//       // Update the current slider value (each time you drag the slider handle)
-//       slider.oninput = function() {
-//         output.innerHTML = this.value;
-//       }
-// });
-
 
 // DATABASE QUERY ANALYSIS
 document.addEventListener('DOMContentLoaded', function() {
@@ -71,9 +51,6 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 
-
-
-
   function light(){
     // Send a GET request to the URL
     fetch('http://23.119.121.13/lights')
@@ -85,6 +62,16 @@ document.addEventListener('DOMContentLoaded', function() {
       lightswitch.innerHTML = "Turn off light";
     }
   }
+
+  document.addEventListener('DOMContentLoaded', function(){
+    document.querySelectorAll('input[name="customRadio"]').forEach(function(input){
+      input.onclick = function(){
+        var data = new FormData();
+        data.append("option", input.value)
+        fetch('http://23.119.121.13/radiobutton', { method:"POST", body:data })
+      }
+    })
+  })
 
 
 
@@ -297,14 +284,30 @@ function raspi_temp(){
         <br>
         <label class="custom-control-label" for="customSwitch1">Turn on Light</label>
       </div>
+      <br>
 
-      <div class="custom-control custom-radio">
-        <input type="radio" id="customRadio1" name="customRadio" class="custom-control-input">
-        <label class="custom-control-label" for="customRadio1">Greyscale</label>
+      <div class="custom-control custom-radio" style="text-align: left;">
+        <input type="radio" id="greyscaleradio" name="customRadio" class="custom-control-input" value="grey">
+        <label class="custom-control-label" for="greyscaleradio">Greyscale</label>
       </div>
-      <div class="custom-control custom-radio">
-        <input type="radio" id="customRadio2" name="customRadio" class="custom-control-input">
-        <label class="custom-control-label" for="customRadio2">Inverted</label>
+      <div class="custom-control custom-radio" style="text-align: left;">
+        <input type="radio" id="inverstedradio" name="customRadio" class="custom-control-input" value="invert">
+        <label class="custom-control-label" for="inverstedradio">Inverted</label>
+      </div>
+
+      <div class="custom-control custom-radio" style="text-align: left;">
+        <input type="radio" id="flipradio" name="customRadio" class="custom-control-input" value="flip">
+        <label class="custom-control-label" for="flipradio">Flip Frames</label>
+      </div>
+
+      <div class="custom-control custom-radio" style="text-align: left;">
+        <input type="radio" id="circleradio" name="customRadio" class="custom-control-input" value="circle">
+        <label class="custom-control-label" for="circleradio">Detect Circles</label>
+      </div>
+
+      <div class="custom-control custom-radio" style="text-align: left;">
+        <input type="radio" id="edgeradio" name="customRadio" class="custom-control-input" value="edge">
+        <label class="custom-control-label" for="edgeradio">Edge Detection</label>
       </div>
 
     </div>
@@ -319,8 +322,7 @@ function raspi_temp(){
     <p>Rate: <span id="rate"></span>s</p>
   </div> -->
 
-<br>
-
+<!-- 
 <h4 style="text-align: left;"> Perform Data Analysis</h4>
 <br>
 
@@ -337,13 +339,13 @@ function raspi_temp(){
     </select>
     <select name="calculate" id="calculate" required="true">
         <option disabled selected value="">Calculate</option>
-        <!-- <option value="Average">Average</option> -->
+        
         <option value="Minimum">Minimum</option>
         <option value="Maximum">Maximum</option>
     </select>
     <input type="submit" class="btn btn-primary" value="Analyze" id="analyzebutton">
 
-</form>
+</form> -->
 
 <br>
 <br>
@@ -366,12 +368,30 @@ function raspi_temp(){
 <br>
 <br>
 <br>
-<h4 style="text-align: left;"> Temperature Plot</h4>
-<canvas id="myChart" style="width:100%;max-width:900px"></canvas>
+
+<ul class="nav nav-tabs" id="myTab" role="tablist">
+  <li class="nav-item">
+    <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Temperature Plot</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Humidity Plot</a>
+  </li>
+</ul>
+<div class="tab-content" id="myTabContent">
+  <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+    <br>
+    <h4 style="text-align: left;"> Temperature</h4>
+    <canvas id="myChart" style="width:100%;max-width:900px"></canvas>
+  </div>
+  <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+    <br>
+    <h4 style="text-align: left;"> Humidity</h4>
+    <canvas id="myHumid" style="width:100%;max-width:900px"></canvas>
+  </div>
+  <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">...</div>
+</div>
 <br>
 
-<h4 style="text-align: left;"> Humidity Plot</h4>
-<canvas id="myHumid" style="width:100%;max-width:900px"></canvas>
 
 
   <style>
