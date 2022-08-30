@@ -3,8 +3,8 @@
 {% block body %}
 <script>
 
-    setInterval(new_data, 3000);
-    setInterval(raspi_temp, 5000);
+    setInterval(new_data, 7000);
+    setInterval(raspi_temp, 7000);
   
     var counter = 0;
     function new_data(){
@@ -73,15 +73,17 @@ document.addEventListener('DOMContentLoaded', function() {
     })
   })
 
+  // Fetching weather API
+  document.addEventListener('DOMContentLoaded', function(){
+    fetch('http://23.119.121.13/weather')
+    .then(response => response.json())
+    .then(data => {
+      document.querySelector('#ctemperature').innerHTML = data['temperature'];
+      document.querySelector('#chumidity').innerHTML = data['humidity'];
+      document.querySelector('#cdescription').innerHTML = data['description'];
+    })
+  })
 
-
-  // Graphs JS
-
-  // var myChart = new Chart("myChart", {
-  //   type: "line",
-  //   data: {},
-  //   options: {}
-  // });
   mychart = 0
   document.addEventListener('DOMContentLoaded', function() {
 
@@ -118,6 +120,7 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('Error:', error);
     });
   });
+
 
 
   // make function graph method
@@ -257,28 +260,8 @@ function raspi_temp(){
             <img src="{{ url_for('video') }}" width="100%">
            
         </div>
-    </div>
-    <div class="col">
-      <br>
-      <br>
-      <h4 style="text-align: left;">Live Data</h4><h4 class="blob green"></h4>
-      <table class="table table-hover">
-        <thead>
-          <tr>
-            <th scope="col">Temperature</th>
-            <th scope="col">Humidity</th>
-            <th scope="col">Timestamp</th>
-          </tr>
-        </thead>
-      <tbody>
-          <tr>
-            <td id="temp">Fetching...</td>
-            <td id="humid">Fetching...</td>
-            <td id="time">Fetching...<span></span></td>
-          </tr>
-        </tbody>
-      </table>
-      <h4 style="text-align: left;">Settings</h4>
+        <br>
+        <h4 style="text-align: left;">Settings</h4>
       <div class="custom-control custom-switch" style="text-align: left;">
         <input type="checkbox" class="custom-control-input" id="customSwitch1" onclick="light()">
         <br>
@@ -309,7 +292,46 @@ function raspi_temp(){
         <input type="radio" id="edgeradio" name="customRadio" class="custom-control-input" value="edge">
         <label class="custom-control-label" for="edgeradio">Edge Detection</label>
       </div>
+      <div class="custom-control custom-radio" style="text-align: left;">
+        <input type="radio" id="contourradio" name="customRadio" class="custom-control-input" value="contour">
+        <label class="custom-control-label" for="contourradio">Contour Detection</label>
+      </div>
+      <div class="custom-control custom-radio" style="text-align: left;">
+        <input type="radio" id="sobelradio" name="customRadio" class="custom-control-input" value="sobel">
+        <label class="custom-control-label" for="sobelradio">Sobel Detection</label>
+      </div>
+    </div>
+    <div class="col">
+      <br>
+      <br>
+      <h4 style="text-align: left;">Live Data</h4><h4 class="blob green"></h4>
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th scope="col" style="color:purple" >Temperature</th>
+            <th scope="col" style="color:purple">Humidity</th>
+            <th scope="col" style="color:purple">Timestamp</th>
+          </tr>
+        </thead>
+      <tbody>
+          <tr>
+            <td id="temp">Fetching...</td>
+            <td id="humid">Fetching...</td>
+            <td id="time">Fetching...<span></span></td>
+          </tr>
+        </tbody>
+      </table>
+      <br>
+      <div class="card shadow-0 border">
+        <div class="card-body p-4">
+          <h4 class="mb-1 sfw-normal">San Jose, CA</h4>
+          <p class="mb-2">outside temperature: <strong id="ctemperature"></strong>°F</p>
+          <p>outside humidity: <strong id="chumidity"></strong>°C</p>
+          <p>Description: <strong id="cdescription"></strong></p>
+        </div>
+      </div>
 
+      </section>
     </div>
   </div>
 </div>

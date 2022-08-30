@@ -12,6 +12,7 @@ import time
 from subprocess import call
 import csv
 import numpy as np
+import requests
 
 # import pytz
 
@@ -21,8 +22,9 @@ light_status = False
 
 app = Flask(__name__)
 
-#initializing camera
+#initializing camera, 0 grabs the default camera
 camera = cv2.VideoCapture(-1)
+# frames = camera.get(cv2.CAP...)
 
 # Ensure templates are auto-reloaded
 app.config["TEMPLATES_AUTO_RELOAD"] = True
@@ -244,7 +246,7 @@ def querytable():
             for (temperature, humidity, time, id) in cur:
                 pass
                 k += 1
-                if (k % 20 != 0):
+                if (k % 40 != 0):
                     continue
                 
                 templogs.append(format(round(temperature, 2), '.2f'))
@@ -301,7 +303,7 @@ def queryhumidity():
             for (temperature, humidity, time, id) in cur:
                 pass
                 k += 1
-                if (k % 20 != 0):
+                if (k % 40 != 0):
                     continue
                 
                 humiditylogs.append(format(round(humidity, 2), '.2f'))
@@ -320,6 +322,14 @@ def queryhumidity():
 
         
         return jsonify(newlogs) # returning a JSON response
+
+
+def sobel_detection(frame):
+    sobelx = cv2.Sobel(frame, cv2.CV_64F,1,0,ksize=5)
+    sobely = cv2.Sobel(frame, cv2.CV_64F,0,1,ksize=5)
+
+    blended = cv2.addWeighted(src1=sobelx,alpha=0.5,src2=sobely,beta=0.5,gamma=0)
+    return blended
 
 def edge_detection(frame):
     gray = cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
@@ -387,25 +397,79 @@ def to_grey(frame):
     frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     return frame
 
+def contour_image(frame):
+
+    # apply greyscale
+    gray = cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
+    
+    # Reduce the noise to avoid false circle detection
+    gray = cv2.medianBlur(gray, 45)
+    
+    # apply threshold inverse binary with OTSU
+    ret, sep_thresh = cv2.threshold(gray,127,255,cv2.THRESH_BINARY)
+
+    # ret, sep_thresh = cv2.threshold(gray,0,255,cv2.THRESH_BINARY_INV+cv2.THRESH_OTSU)
+    # ret, frame = cv2.threshold(gray,0,255,cv2.THRESH_BINARY_INV+cv2.THRESH_OTSU)
+
+    # dist_transform = cv2.distanceTransform(frame,cv2.DIST_L2,5)
+    contours, hierarchy = cv2.findContours(sep_thresh.copy(), cv2.RETR_CCOMP, cv2.CHAIN_APPROX_SIMPLE)
+
+    # For every entry in contours
+    for i in range(len(contours)):
+        # last column in the array is -1 if an external contour (no contours inside of it)
+        if hierarchy[0][i][3] == -1:
+            # We can now draw the external contours from the list of contours
+            cv2.drawContours(frame, contours, i, (255, 0, 0), 3)
+    return frame
+
+def contour_image2(frame):
+
+    # apply greyscale
+    gray = cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
+    
+    th2 = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY, 11, 8)
+    # apply threshold inverse binary with OTSU
+    ret, sep_thresh = cv2.threshold(gray,127,255,cv2.THRESH_BINARY)
+
+    sep_thresh = cv2.addWeighted(src1=sep_thresh,alpha=0.4,src2=th2,beta=0.6,gamma=0)
+    # ret, sep_thresh = cv2.threshold(gray,0,255,cv2.THRESH_BINARY_INV+cv2.THRESH_OTSU)
+    # ret, frame = cv2.threshold(gray,0,255,cv2.THRESH_BINARY_INV+cv2.THRESH_OTSU)
+
+    # dist_transform = cv2.distanceTransform(frame,cv2.DIST_L2,5)
+    contours, hierarchy = cv2.findContours(sep_thresh.copy(), cv2.RETR_CCOMP, cv2.CHAIN_APPROX_SIMPLE)
+
+    # For every entry in contours
+    for i in range(len(contours)):
+        # last column in the array is -1 if an external contour (no contours inside of it)
+        if hierarchy[0][i][3] == -1:
+            # We can now draw the external contours from the list of contours
+            cv2.drawContours(frame, contours, i, (255, 0, 0), 3)
+    return frame
+
+
 
 grey = False
 invert = False
 flip = False
 circle = False
 edge = False
+contour = False
+sobel = False
 
 def flip_off():
-    global grey, invert, flip, circle, edge
+    global grey, invert, flip, circle, edge, contour, sobel
     grey = False
     invert = False
     flip = False
     circle = False
     edge = False
+    contour = False
+    sobel = False
 
 
 @app.route("/radiobutton", methods=["POST"])
 def radio_button():
-    global grey, invert, flip, circle, edge
+    global grey, invert, flip, circle, edge, contour, sobel
     option = request.form.get("option")
     print(option)
     
@@ -421,19 +485,24 @@ def radio_button():
         edge = True
     elif option == "flip":
         flip = True
+    elif option == "contour":
+        contour = True
+    elif option == "sobel":
+        sobel = True
 
     return ('', 204)
 
 
 def gen_frames(option=None):
-    global camera, grey, circle
+    global camera, grey, circle, flip, invert, contour, edge, sobel
 
     while True:
-        # read the camera frames
+        # read the camera frames, 
         success, frame = camera.read()
 
+    
         if grey:
-            frame = to_grey(frame)
+            frame = to_grey(frame) 
         
         elif invert:
             frame = invertframes(frame)
@@ -446,6 +515,12 @@ def gen_frames(option=None):
     
         elif edge:
             frame = edge_detection(frame)
+        
+        elif contour:
+            frame = contour_image(frame)
+        
+        elif sobel:
+            frame = sobel_detection(frame)
 
             
 
@@ -469,6 +544,17 @@ def video():
     return Response(gen_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 
+# def watershed(frame):
+#     # Median Blur Filtering to blur the image a bit, no neccessary for our image??
+#     #which will be useful later on when we threshold.
+#     # img = cv2.medianBlur(frame, 35)
+
+#     # gray = cv2.cvtColor(img, cv2.COLOR_BAYER_BG2GRAY)
+#     # ret, thresh = cv2.threshold(gray,127,255,cv2.THRESH_BINARY_INV)
+#     # # option noise removal
+#     # kernel = np.ones((3,3), np.uint8)
+    
+#     return img
 
 # Raspberry Pi Internal Temperature
 @app.route("/measuretemp")
@@ -485,6 +571,32 @@ def errorhandler(e):
     return apology(e.name, e.code)
 
 
+# Weather API 
+API_KEY = "0b291d8c3bcfcbf09d80a65609f5be82"
+
+# Weather Location
+MY_LAT = 37.338207
+MY_LON = -121.886330
+
+weather_params = {
+        "lat": MY_LAT,
+        "lon": MY_LON,
+        "appid": API_KEY,
+        "units":"imperial"
+    }
+
+@app.route('/weather')
+def weather():
+    OMW_endpoint = "https://api.openweathermap.org/data/2.5/weather"
+    
+    response = requests.get(OMW_endpoint, params=weather_params)
+    response.raise_for_status()
+    weather_data = response.json()
+    description = weather_data["weather"][0]["description"]
+    temperature = weather_data["main"]["temp"]
+    humidity = weather_data["main"]["humidity"]
+
+    return jsonify({"description":description, "temperature":temperature, "humidity":humidity})
 
 # Download Data
 @app.route('/download')
@@ -533,4 +645,5 @@ for code in default_exceptions:
     app.errorhandler(code)(errorhandler)
 
 if __name__ == "__main__":
-   app.run(host='0.0.0.0', port=80, debug=False)
+    app.run(host='0.0.0.0', port=80, debug=False)
+    # weather()
